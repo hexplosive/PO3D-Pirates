@@ -10,12 +10,16 @@ public class InteractLaptop : MonoBehaviour
     public AudioClip laughClip;
     public AudioClip errorClip;
 
+    public GameObject screen1;
+    public GameObject screen2;
+
     // Start is called before the first frame update
     void Start()
     {
 
+        screen1.SetActive(true);
+        screen2.SetActive(false);
 
-        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -40,12 +44,16 @@ public class InteractLaptop : MonoBehaviour
         if (runcount == 0)
         {
             audio.clip = laughClip;
+            screen1.SetActive(false);
+            screen2.SetActive(true);
+            Debug.Log("YOU GOT SCURVY!");
         }
         else
         {
             audio.clip = errorClip;
+            Debug.Log("L");
         }
-        Debug.Log("AAHHH");
+        
 
         canRun = false;
         
