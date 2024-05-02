@@ -13,6 +13,9 @@ public class InteractLaptop : MonoBehaviour
     public GameObject screen1;
     public GameObject screen2;
 
+    public GameObject interactui;
+    public GameObject scurvyui;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,13 +23,28 @@ public class InteractLaptop : MonoBehaviour
         screen1.SetActive(true);
         screen2.SetActive(false);
 
+        interactui.SetActive(false);
+        scurvyui.SetActive(false);
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        canRun = true;
+       
+        if (other.gameObject == player)
+        {
+            canRun = true;
+            interactui.SetActive(true);
+        }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == player)
+        {
+            interactui.SetActive(false);
+        }
+    }
 
 
     private void OnTriggerStay(Collider other)
@@ -53,7 +71,9 @@ public class InteractLaptop : MonoBehaviour
             audio.clip = errorClip;
             Debug.Log("L");
         }
-        
+
+        scurvyui.SetActive(true);
+        StartCoroutine(gotScurvy());
 
         canRun = false;
         
@@ -64,6 +84,13 @@ public class InteractLaptop : MonoBehaviour
         audio.Play();
 
         runcount++;
+    }
+
+    IEnumerator gotScurvy()
+    {
+        yield return new WaitForSeconds(5.0f);
+
+        scurvyui.SetActive(false);
     }
 
 
