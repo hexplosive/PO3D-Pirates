@@ -30,12 +30,20 @@ public class InteractChest : MonoBehaviour
     float ypos = 0.0f;
     float zpos = 0.0f;
 
+    private int runcount = 0;
+
+    public AudioClip fanfare;
+    public AudioClip munch;
+
+    public GameObject winimage;
+
     // Start is called before the first frame update
     void Start()
     {
         
 
         ui.SetActive(false);
+        winimage.SetActive(false);
     }
 
 
@@ -65,18 +73,37 @@ public class InteractChest : MonoBehaviour
 
     void OnInteract() 
     {
-        xpos = orange.transform.position.x;
-        ypos = orange.transform.position.y;
-        zpos = orange.transform.position.z;
+        AudioSource audio = player.GetComponent<AudioSource>();
 
-        Debug.Log("\nOnInteract ypos: " + ypos);
+        if (runcount == 0)
+        {
+            xpos = orange.transform.position.x;
+            ypos = orange.transform.position.y;
+            zpos = orange.transform.position.z;
+            isRunning = true;
+            StartCoroutine(OpenBox());
+            chestanimator.SetTrigger("Open");
+            orangeanimator.SetTrigger("Appear");
+            StartCoroutine(Orange());
+            audio.clip = fanfare;
+            runcount++;
+            audio.volume = 0.1f;
+            audio.Play();
+        }
+        else if (runcount == 1)
+        {
+            Debug.Log("running");
+            audio.clip = munch;
+            orange.SetActive(false);
+            runcount++;
+            audio.volume = 0.1f;
+            audio.Play();
+            StartCoroutine(Win());
+        }
 
-        isRunning = true;
-        StartCoroutine(OpenBox());
-        chestanimator.SetTrigger("Open");
-        orangeanimator.SetTrigger("Appear");
-        StartCoroutine(Orange());
         
+
+
     }
 
     IEnumerator OpenBox()
@@ -90,7 +117,15 @@ public class InteractChest : MonoBehaviour
     {
         yield return new WaitForSeconds(4.25f);
         hasOranged = true;
+        isRunning = false;
     }    
+
+    IEnumerator Win()
+    {
+        yield return new WaitForSeconds(5f);
+        winimage.SetActive(true);
+
+    }
 
 
     // Update is called once per frame
@@ -99,7 +134,7 @@ public class InteractChest : MonoBehaviour
         if (hasOpened && boxbool)
         {
             chestanimator.enabled = false;
-            chestlid.transform.rotation = Quaternion.Euler(-120, 50, 0);
+            chestlid.transform.rotation = Quaternion.Euler(-120, 165, 0);
             boxbool = false;
             
         }
@@ -107,7 +142,6 @@ public class InteractChest : MonoBehaviour
         {
             ypos = ypos + 0.65f;
             Vector3 newPos = new Vector3(xpos, ypos, zpos);
-            Debug.Log("\nhasOranged ypos: " + ypos);
 
             orangeanimator.enabled = false;
 
@@ -115,13 +149,17 @@ public class InteractChest : MonoBehaviour
             orangebool = false;
 
         }
-        else if (hasOranged)
+        else if (hasOranged && runcount > 1)
         {
             Vector3 newPos = new Vector3(xpos, ypos, zpos);
-            Debug.Log("\nNew ypos: " + ypos);
             orange.transform.position = newPos;
 
             orange.transform.Rotate(0, 0.05f, 0);
+        }
+
+        if (winimage.activeSelf)
+        {
+            ui.SetActive(false);
         }
 
 
