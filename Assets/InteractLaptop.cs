@@ -16,6 +16,8 @@ public class InteractLaptop : MonoBehaviour
     public GameObject interactui;
     public GameObject scurvyui;
 
+    public GameObject island;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -64,7 +66,8 @@ public class InteractLaptop : MonoBehaviour
             audio.clip = laughClip;
             screen1.SetActive(false);
             screen2.SetActive(true);
-            Debug.Log("YOU GOT SCURVY!");
+            Debug.Log("Island Moved");
+            island.transform.Translate(0, 0, -300);
         }
         else
         {
